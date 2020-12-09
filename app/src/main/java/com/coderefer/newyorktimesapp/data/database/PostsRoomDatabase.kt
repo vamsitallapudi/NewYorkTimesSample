@@ -5,6 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.coderefer.newyorktimesapp.data.home.Post
+import kotlinx.coroutines.CoroutineScope
 
 @Database(entities = [Post::class], version = 1, exportSchema = false)
 abstract class PostsRoomDatabase : RoomDatabase() {
@@ -12,19 +13,24 @@ abstract class PostsRoomDatabase : RoomDatabase() {
 
     companion object {
 
-        @Volatile
-        private var INSTANCE: PostsRoomDatabase? = null
+        private const val DATABASE_NAME = "posts_database"
 
-        fun getDatabase(context: Context): PostsRoomDatabase {
-            return INSTANCE ?: synchronized(this) {
-                val instance = Room.databaseBuilder(
-                    context.applicationContext,
-                    PostsRoomDatabase::class.java,
-                    "posts_database"
-                ).build()
-                INSTANCE = instance
-                instance
+        @Volatile
+        private var instance: PostsRoomDatabase? = null
+
+        fun getDatabase(context: Context
+        ): PostsRoomDatabase {
+            return instance ?: synchronized(this) {
+                instance ?: buildDatabase(context).also { instance = it }
             }
+        }
+
+        private fun buildDatabase(context: Context): PostsRoomDatabase {
+            return Room.databaseBuilder(
+                context.applicationContext,
+                PostsRoomDatabase::class.java,
+                DATABASE_NAME
+            ).build()
         }
     }
 }
