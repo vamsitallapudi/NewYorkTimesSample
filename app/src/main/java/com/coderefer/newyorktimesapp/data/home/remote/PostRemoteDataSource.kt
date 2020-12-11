@@ -10,6 +10,10 @@ import com.coderefer.newyorktimesapp.data.home.HomePosts
 import com.coderefer.newyorktimesapp.util.NYT_KEY
 import com.google.gson.GsonBuilder
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flow
 import okhttp3.Cache
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -21,6 +25,8 @@ import java.util.concurrent.TimeUnit
 
 //TODO add service as DI
 class PostRemoteDataSource(private val context: Context) {
+
+    private val refreshIntervalMs: Long = 1000 * 60
 
     private fun loggingInterceptor(): HttpLoggingInterceptor {
         val debugLevel = if (BuildConfig.DEBUG) {
@@ -59,25 +65,32 @@ class PostRemoteDataSource(private val context: Context) {
             .create(NYTService::class.java)
     }
 
-    suspend fun fetchPosts() = safeApiCall(
-        call = { requestPosts() },
-        errorMessage = "Error fetching posts"
-    )
+    suspend fun fetchPosts() : Flow<Result<HomePosts>> {
+        return safeApiCall(
+            call = { requestPosts },
+            errorMessage = "Error fetching posts"
+        )
+    }
 
-    private suspend fun requestPosts(): Result<HomePosts> {
-
-        try {
-            val response = service!!.getPostsAsync(NYT_KEY).await()
-            if (response.isSuccessful) {
-                val postList = response.body()
-                if (postList != null) {
-                    return Result.Success(postList)
+    private val requestPosts: Flow<Result<HomePosts>> = flow {
+        while (true) {
+            try {
+                val response = service!!.getPostsAsync(NYT_KEY).await()
+                if (response.isSuccessful) {
+                    val postList = response.body()
+                    if (postList != null) {
+                        emit(Result.Success(postList))
+                        delay(refreshIntervalMs)
+                    } else {
+                        emit(Result.Error(IOException("Story List Retrieval failed")))
+                        delay(refreshIntervalMs)
+                    }
                 }
-                return Result.Error(IOException("Story List Retrieval failed"))
+            } catch (e: Exception) {
+                Log.d(PostRemoteDataSource::class.simpleName, e.toString())
+                emit( Result.Error(Exception("Error calling request Posts API")))
+                delay(refreshIntervalMs)
             }
-        } catch (e: Exception) {
-            Log.d(PostRemoteDataSource::class.simpleName, e.toString())
         }
-        return Result.Error(Exception("Error calling request Posts API"))
     }
 }

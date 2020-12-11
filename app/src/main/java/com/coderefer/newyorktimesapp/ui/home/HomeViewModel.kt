@@ -10,10 +10,11 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import com.coderefer.newyorktimesapp.data.Result
+import kotlinx.coroutines.flow.collect
 
 class HomeViewModel @Inject constructor(private val postRepo: PostRepo) : ViewModel() {
 
-    val allPosts: LiveData<List<Post>> = postRepo.allPosts.asLiveData()
+//    val allPosts: LiveData<List<Post>> = postRepo.getPosts.asLiveData()
     private val _uiState = MutableLiveData<HomeUIModel>()
     val uiState : LiveData<HomeUIModel>
         get() = _uiState
@@ -30,12 +31,15 @@ class HomeViewModel @Inject constructor(private val postRepo: PostRepo) : ViewMo
                 showLoading()
             }
             val result = postRepo.fetchPostsFromNetwork()
-            when(result) {
-                is Result.Success -> {
-                    val posts = result.data.results
-                    postsMutableLiveData.postValue(Result.Success(posts))
+
+            result.collect {
+                when(it) {
+                    is Result.Success -> {
+                        val posts = it.data.results
+                        postsMutableLiveData.postValue(Result.Success(posts))
+                    }
+                    is Result.Error -> postsMutableLiveData.postValue(it)
                 }
-                is Result.Error -> postsMutableLiveData.postValue(result)
             }
         }
     }

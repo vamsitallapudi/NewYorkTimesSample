@@ -29,7 +29,7 @@ class HomeFragment : Fragment() {
             viewmodel = (activity as HomeActivity).obtainViewModel()
         }
         val adapter = initRecyclerAdapter()
-        fetchPostsFromNetwork()//TODO change to db version check
+        fetchPosts()//TODO change to db version check
         observePostsLiveData(adapter)
         observeUIState()
         return mBinding.root
@@ -55,23 +55,23 @@ class HomeFragment : Fragment() {
         })
     }
 
-    private fun fetchPosts(adapter: PostsRecyclerAdapter) {
-        mBinding.viewmodel!!.allPosts.observe(
-            this,
-            Observer<List<Post>> {
-                if (it == null) {
-//                    db is null need to call fetchPostsFromNetwork
-                    fetchPostsFromNetwork()
-                } else {
-                    val storiesList = it
-                    populateAdapter(adapter, storiesList)
-                }
+//    private fun fetchPosts(adapter: PostsRecyclerAdapter) {
+//        mBinding.viewmodel!!.allPosts.observe(
+//            this,
+//            Observer<List<Post>> {
+//                if (it == null) {
+////                    db is null need to call fetchPostsFromNetwork
+//                    fetchPostsFromNetwork()
+//                } else {
+//                    val storiesList = it
+//                    populateAdapter(adapter, storiesList)
+//                }
+//
+//            }
+//        )
+//    }
 
-            }
-        )
-    }
-
-    private fun fetchPostsFromNetwork() {
+    private fun fetchPosts() {
         job = mBinding.viewmodel!!.fetchPosts()
     }
 

@@ -5,19 +5,27 @@ import com.coderefer.newyorktimesapp.data.Result
 import com.coderefer.newyorktimesapp.data.home.local.PostLocalDataSource
 import com.coderefer.newyorktimesapp.data.home.remote.PostRemoteDataSource
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.onEach
 
 class PostRepo(
     private val remoteDataSource: PostRemoteDataSource,
     private val localDataSource: PostLocalDataSource
 ) {
-    val allPosts : Flow<List<Post>> = localDataSource.allPosts
+//    val getPosts : Flow<List<Post>> = localDataSource.getPosts
+//    suspend fun fetchPosts(): Result<List<Post>> {
+//        val posts = localDataSource.getPosts
+//        if (posts ==null){
+//
+//        }
+//    }
 
-    suspend fun fetchPostsFromNetwork():  Result<HomePosts> {
-        val result = remoteDataSource.fetchPosts()
-        if (result is Result.Success) {
-            saveToLocalDB(result.data)
-        }
-        return result
+    suspend fun fetchPostsFromNetwork():  Flow<Result<HomePosts>> {
+        return remoteDataSource.fetchPosts()
+            .onEach {
+                if (it is Result.Success) {
+                    saveToLocalDB(it.data)
+                }
+            }
     }
 
     private suspend fun saveToLocalDB(data: HomePosts) {
