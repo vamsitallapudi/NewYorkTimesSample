@@ -4,6 +4,7 @@ import androidx.annotation.WorkerThread
 import com.coderefer.newyorktimesapp.data.database.PostDao
 import com.coderefer.newyorktimesapp.data.home.Post
 import kotlinx.coroutines.flow.Flow
+import com.coderefer.newyorktimesapp.data.Result
 
 class PostLocalDataSource(private val postDao: PostDao) {
     val allPosts: Flow<List<Post>> = postDao.getPosts()

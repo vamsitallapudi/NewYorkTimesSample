@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface PostDao {
-    @Query("SELECT * FROM post_table ORDER BY date desc")
+    @Query("SELECT * FROM post_table ORDER BY created_date asc")
     fun getPosts(): Flow<List<Post>>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)

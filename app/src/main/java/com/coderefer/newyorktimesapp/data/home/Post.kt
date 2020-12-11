@@ -16,19 +16,19 @@ data class Post(
     @SerializedName("id")
     val id: Long,
 
-    @ColumnInfo(name = "name")
-    @SerializedName("name")
-    val name: String,
+    @ColumnInfo(name = "title")
+    @SerializedName("title")
+    val title: String,
 
-    @ColumnInfo(name = "desc")
-    @SerializedName("desc")
+    @ColumnInfo(name = "abstract")
+    @SerializedName("abstract")
     val desc: String,
 
     @ColumnInfo(name = "url")
     @SerializedName("url")
     val url: String,
 
-    @ColumnInfo(name = "date")
-    @SerializedName("date")
-    val date: Date
+    @ColumnInfo(name = "created_date")
+    @SerializedName("created_date")
+    val createdDate: Date
 )

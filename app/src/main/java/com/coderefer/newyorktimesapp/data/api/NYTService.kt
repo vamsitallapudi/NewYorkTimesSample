@@ -9,7 +9,7 @@ import retrofit2.http.Query
 interface NYTService {
 
     @GET("home.json")
-    suspend fun getPostsAsync(@Query("api-key") key:String): Deferred<Response<HomePosts>>
+    fun getPostsAsync(@Query("api-key") key:String): Deferred<Response<HomePosts>>
 
     companion object {
         const val BASE_URL = "https://api.nytimes.com/svc/topstories/v2/"
