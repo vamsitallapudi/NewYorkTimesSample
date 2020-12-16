@@ -6,8 +6,7 @@ import com.coderefer.newyorktimesapp.data.home.Post
 import kotlinx.coroutines.flow.Flow
 import com.coderefer.newyorktimesapp.data.Result
 
-class PostLocalDataSource(private val postDao: PostDao) {
-    val getPosts: Flow<List<Post>> = postDao.getPosts()
+class PostLocalDataSource(val postDao: PostDao) {
 
 
     @Suppress("RedundantSuspendModifier")

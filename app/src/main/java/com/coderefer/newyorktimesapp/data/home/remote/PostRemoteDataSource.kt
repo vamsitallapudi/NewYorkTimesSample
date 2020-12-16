@@ -7,13 +7,12 @@ import com.coderefer.newyorktimesapp.data.api.NYTService
 import com.coderefer.newyorktimesapp.util.safeApiCall
 import com.coderefer.newyorktimesapp.data.Result
 import com.coderefer.newyorktimesapp.data.home.HomePosts
+import com.coderefer.newyorktimesapp.data.home.Post
 import com.coderefer.newyorktimesapp.util.NYT_KEY
 import com.google.gson.GsonBuilder
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.*
 import okhttp3.Cache
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -65,19 +64,19 @@ class PostRemoteDataSource(private val context: Context) {
             .create(NYTService::class.java)
     }
 
-    suspend fun fetchPosts() : Flow<Result<HomePosts>> {
+    suspend fun fetchPosts() : Flow<Result<List<Post>>> {
         return safeApiCall(
             call = { requestPosts },
             errorMessage = "Error fetching posts"
         )
     }
 
-    private val requestPosts: Flow<Result<HomePosts>> = flow {
+    private val requestPosts: Flow<Result<List<Post>>> = flow {
         while (true) {
             try {
                 val response = service!!.getPostsAsync(NYT_KEY).await()
                 if (response.isSuccessful) {
-                    val postList = response.body()
+                    val postList = response.body()?.results
                     if (postList != null) {
                         emit(Result.Success(postList))
                         delay(refreshIntervalMs)

@@ -18,7 +18,6 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var viewModel : HomeViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        setContentView(R.layout.activity_home)
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_home)
         replaceFragment(obtainViewFragment(), R.id.frag_container, true)
 //        TODO: replace with di

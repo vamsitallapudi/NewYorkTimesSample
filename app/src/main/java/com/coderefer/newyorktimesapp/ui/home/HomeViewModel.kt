@@ -10,13 +10,13 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import com.coderefer.newyorktimesapp.data.Result
+import com.coderefer.newyorktimesapp.data.home.HomePosts
 import kotlinx.coroutines.flow.collect
 
 class HomeViewModel @Inject constructor(private val postRepo: PostRepo) : ViewModel() {
 
-//    val allPosts: LiveData<List<Post>> = postRepo.getPosts.asLiveData()
     private val _uiState = MutableLiveData<HomeUIModel>()
-    val uiState : LiveData<HomeUIModel>
+    val uiState: LiveData<HomeUIModel>
         get() = _uiState
     private val postsMutableLiveData = MutableLiveData<Result<List<Post>>>()
     val postsLiveData: LiveData<Result<List<Post>>>
@@ -30,15 +30,17 @@ class HomeViewModel @Inject constructor(private val postRepo: PostRepo) : ViewMo
             withContext(dispatchProvider.main) {
                 showLoading()
             }
-            val result = postRepo.fetchPostsFromNetwork()
+            val result = postRepo.fetchPosts()
 
             result.collect {
-                when(it) {
-                    is Result.Success -> {
-                        val posts = it.data.results
-                        postsMutableLiveData.postValue(Result.Success(posts))
+                when (it) {
+                    is Result.Success<*> -> {
+                        postsMutableLiveData.postValue(Result.Success(it.data as List<Post>))
                     }
                     is Result.Error -> postsMutableLiveData.postValue(it)
+                    is Result.Loading -> {
+                        //TODO()
+                    }
                 }
             }
         }
@@ -52,8 +54,8 @@ class HomeViewModel @Inject constructor(private val postRepo: PostRepo) : ViewMo
         showProgress: Boolean = false,
         showError: Event<Int>? = null,
         showSuccess: Event<HomeUIModel>? = null
-        ) {
-        val uiModel = HomeUIModel(showProgress, showError,showSuccess)
+    ) {
+        val uiModel = HomeUIModel(showProgress, showError, showSuccess)
         _uiState.value = uiModel
     }
 

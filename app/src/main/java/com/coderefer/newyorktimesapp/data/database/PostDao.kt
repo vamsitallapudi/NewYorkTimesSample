@@ -14,4 +14,7 @@ interface PostDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(post: Post)
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertAll(posts: List<Post>)
 }

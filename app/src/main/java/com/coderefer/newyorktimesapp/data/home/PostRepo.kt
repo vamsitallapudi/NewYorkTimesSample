@@ -4,28 +4,28 @@ import androidx.annotation.WorkerThread
 import com.coderefer.newyorktimesapp.data.Result
 import com.coderefer.newyorktimesapp.data.home.local.PostLocalDataSource
 import com.coderefer.newyorktimesapp.data.home.remote.PostRemoteDataSource
+import com.coderefer.newyorktimesapp.data.repo.networkBoundResource
+import com.coderefer.newyorktimesapp.util.RateLimiter
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.onEach
+import java.util.concurrent.TimeUnit
 
 class PostRepo(
     private val remoteDataSource: PostRemoteDataSource,
     private val localDataSource: PostLocalDataSource
 ) {
-//    val getPosts : Flow<List<Post>> = localDataSource.getPosts
-//    suspend fun fetchPosts(): Result<List<Post>> {
-//        val posts = localDataSource.getPosts
-//        if (posts ==null){
-//
-//        }
-//    }
 
-    suspend fun fetchPostsFromNetwork():  Flow<Result<HomePosts>> {
-        return remoteDataSource.fetchPosts()
-            .onEach {
-                if (it is Result.Success) {
-                    saveToLocalDB(it.data)
-                }
-            }
+    @ExperimentalCoroutinesApi
+    suspend fun fetchPosts(): Flow<Result<*>> {
+        return networkBoundResource(
+            fetchFromLocal = { localDataSource.postDao.getPosts() },
+            shouldFetchFromRemote = { (it as List<Post>).size < 1 },
+            fetchFromRemote = { remoteDataSource.fetchPosts() },
+            saveRemoteData = { localDataSource.postDao.insertAll(it as List<Post>) },
+        )
     }
 
     private suspend fun saveToLocalDB(data: HomePosts) {

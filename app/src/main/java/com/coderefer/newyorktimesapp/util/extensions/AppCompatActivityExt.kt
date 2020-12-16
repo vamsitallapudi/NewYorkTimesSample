@@ -96,9 +96,6 @@ fun AppCompatActivity.setupActionBar(@IdRes toolbarId: Int, action: ActionBar.()
     }
 }
 
-//fun <T : ViewModel> AppCompatActivity.obtainLoginViewModel(viewModelClass: Class<T>) =
-//        ViewModelProviders.of(this, LoginViewModelFactory.getInstance(application)).get(viewModelClass)
-
 /**
  * Runs a FragmentTransaction, then calls commit().
  */
