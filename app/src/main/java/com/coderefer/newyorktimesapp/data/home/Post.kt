@@ -11,7 +11,7 @@ import java.util.*
 @Entity(tableName = "post_table")
 @TypeConverters(DateConverter::class)
 data class Post(
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
     @SerializedName("id")
     val id: Long,
