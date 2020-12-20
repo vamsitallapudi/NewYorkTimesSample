@@ -4,10 +4,12 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.coderefer.newyorktimesapp.data.home.Post
-import kotlinx.coroutines.CoroutineScope
+import com.coderefer.newyorktimesapp.data.database.dao.MultiMediaDao
+import com.coderefer.newyorktimesapp.data.database.dao.PostDao
+import com.coderefer.newyorktimesapp.data.database.entity.MultiMedia
+import com.coderefer.newyorktimesapp.data.database.entity.Post
 
-@Database(entities = [Post::class], version = 1, exportSchema = false)
+@Database(entities = [Post::class, MultiMedia::class], version = 1, exportSchema = false)
 abstract class PostsRoomDatabase : RoomDatabase() {
     abstract fun postDao(): PostDao
 

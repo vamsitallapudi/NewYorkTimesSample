@@ -9,11 +9,11 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.coderefer.newyorktimesapp.data.home.Post
+import com.coderefer.newyorktimesapp.data.database.entity.Post
 import com.coderefer.newyorktimesapp.databinding.FragmentHomeBinding
 import kotlinx.coroutines.Job
 import com.coderefer.newyorktimesapp.data.Result
-
+import com.coderefer.newyorktimesapp.data.database.entity.PostAndMultiMedia
 
 
 class HomeFragment : Fragment() {
@@ -81,10 +81,11 @@ class HomeFragment : Fragment() {
             Observer { fetchPostResult ->
                 when (fetchPostResult) {
                     is Result.Success -> {
-                        val storiesList = fetchPostResult.data as ArrayList<Post>
+                        val storiesList = fetchPostResult.data as ArrayList<PostAndMultiMedia>
                         populateAdapter(adapter, storiesList)
                     }
                     is Result.Error -> handleError()
+                    is Result.Loading -> TODO()
                 }
 
             }
@@ -95,7 +96,7 @@ class HomeFragment : Fragment() {
         Log.d(HomeFragment::class.java.simpleName, "error occured")
     }
 
-    private fun populateAdapter(adapter: PostsRecyclerAdapter,list:List<Post>) {
+    private fun populateAdapter(adapter: PostsRecyclerAdapter,list:List<PostAndMultiMedia>) {
         adapter.submitList(list)
     }
 

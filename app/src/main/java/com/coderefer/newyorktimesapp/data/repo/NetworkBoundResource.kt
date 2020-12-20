@@ -1,7 +1,8 @@
 package com.coderefer.newyorktimesapp.data.repo
 
 import com.coderefer.newyorktimesapp.data.Result
-import com.coderefer.newyorktimesapp.data.home.Post
+import com.coderefer.newyorktimesapp.data.database.entity.Post
+import com.coderefer.newyorktimesapp.data.database.entity.PostAndMultiMedia
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 

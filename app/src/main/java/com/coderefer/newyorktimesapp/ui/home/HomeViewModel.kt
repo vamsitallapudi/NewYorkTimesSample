@@ -2,7 +2,7 @@ package com.coderefer.newyorktimesapp.ui.home
 
 import androidx.lifecycle.*
 import com.coderefer.newyorktimesapp.data.CoroutinesDispatchProvider
-import com.coderefer.newyorktimesapp.data.home.Post
+import com.coderefer.newyorktimesapp.data.database.entity.Post
 import com.coderefer.newyorktimesapp.data.home.PostRepo
 import com.coderefer.newyorktimesapp.util.event.Event
 import kotlinx.coroutines.Job
@@ -10,7 +10,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import com.coderefer.newyorktimesapp.data.Result
-import com.coderefer.newyorktimesapp.data.home.HomePosts
+import com.coderefer.newyorktimesapp.data.database.entity.PostAndMultiMedia
 import kotlinx.coroutines.flow.collect
 
 class HomeViewModel @Inject constructor(private val postRepo: PostRepo) : ViewModel() {
@@ -18,8 +18,8 @@ class HomeViewModel @Inject constructor(private val postRepo: PostRepo) : ViewMo
     private val _uiState = MutableLiveData<HomeUIModel>()
     val uiState: LiveData<HomeUIModel>
         get() = _uiState
-    private val postsMutableLiveData = MutableLiveData<Result<List<Post>>>()
-    val postsLiveData: LiveData<Result<List<Post>>>
+    private val postsMutableLiveData = MutableLiveData<Result<List<PostAndMultiMedia>>>()
+    val postsLiveData: LiveData<Result<List<PostAndMultiMedia>>>
         get() = postsMutableLiveData
 
     //    TODO: Replace with DI
@@ -35,7 +35,7 @@ class HomeViewModel @Inject constructor(private val postRepo: PostRepo) : ViewMo
             result.collect {
                 when (it) {
                     is Result.Success<*> -> {
-                        postsMutableLiveData.postValue(Result.Success(it.data as List<Post>))
+                        postsMutableLiveData.postValue(Result.Success(it.data as List<PostAndMultiMedia>))
                     }
                     is Result.Error -> postsMutableLiveData.postValue(it)
                     is Result.Loading -> {
@@ -67,11 +67,5 @@ class HomeViewModel @Inject constructor(private val postRepo: PostRepo) : ViewMo
         val showError: Event<Int>?,
         val showSuccess: Event<HomeUIModel>?
     )
-
-
-    //    launching coroutine to insert data in a non-blocking way
-    fun insert(post: Post) = viewModelScope.launch {
-        postRepo.insert(post)
-    }
 
 }

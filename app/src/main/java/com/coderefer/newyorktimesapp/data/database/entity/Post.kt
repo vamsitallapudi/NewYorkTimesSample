@@ -1,20 +1,17 @@
-package com.coderefer.newyorktimesapp.data.home
+package com.coderefer.newyorktimesapp.data.database.entity
 
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.PrimaryKey
-import androidx.room.TypeConverters
+import androidx.room.*
 import com.coderefer.newyorktimesapp.util.DateConverter
 import com.google.gson.annotations.SerializedName
 import java.util.*
 
-@Entity(tableName = "post_table")
+@Entity(tableName = "Post")
 @TypeConverters(DateConverter::class)
 data class Post(
     @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = "id")
-    @SerializedName("id")
-    val id: Long,
+    @ColumnInfo(name = "postId")
+    @SerializedName("postId")
+    val postId: Long,
 
     @ColumnInfo(name = "title")
     @SerializedName("title")
@@ -30,5 +27,17 @@ data class Post(
 
     @ColumnInfo(name = "created_date")
     @SerializedName("created_date")
-    val createdDate: Date
-)
+    val createdDate: Date,
+
+    @Ignore
+    @SerializedName("multimedia")
+    val multiMedia: List<MultiMedia>
+) {
+    constructor(
+        postId: Long,
+        title: String,
+        desc: String,
+        url: String,
+        createdDate: Date
+    ): this(postId, title, desc, url, createdDate, emptyList())
+}

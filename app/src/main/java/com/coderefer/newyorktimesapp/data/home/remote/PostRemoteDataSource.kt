@@ -6,8 +6,8 @@ import com.coderefer.newyorktimesapp.BuildConfig
 import com.coderefer.newyorktimesapp.data.api.NYTService
 import com.coderefer.newyorktimesapp.util.safeApiCall
 import com.coderefer.newyorktimesapp.data.Result
-import com.coderefer.newyorktimesapp.data.home.HomePosts
-import com.coderefer.newyorktimesapp.data.home.Post
+import com.coderefer.newyorktimesapp.data.database.entity.Post
+import com.coderefer.newyorktimesapp.data.database.entity.PostAndMultiMedia
 import com.coderefer.newyorktimesapp.util.NYT_KEY
 import com.google.gson.GsonBuilder
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory

@@ -1,6 +1,6 @@
 package com.coderefer.newyorktimesapp.data.api
 
-import com.coderefer.newyorktimesapp.data.home.HomePosts
+import com.coderefer.newyorktimesapp.data.database.entity.HomePosts
 import kotlinx.coroutines.Deferred
 import retrofit2.Response
 import retrofit2.http.GET
